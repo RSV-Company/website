@@ -18,14 +18,14 @@ export function FeaturedProducts({
 
   const scrollLeft = () => {
     scrollContainerRef.current?.scrollBy({
-      left: -250,
+      left: -320,
       behavior: "smooth",
     });
   };
 
   const scrollRight = () => {
     scrollContainerRef.current?.scrollBy({
-      left: 250,
+      left: 320,
       behavior: "smooth",
     });
   };
@@ -44,7 +44,7 @@ export function FeaturedProducts({
             </p>
           </div>
 
-          <div className="flex gap-2 lg:hidden ml-auto">
+          {/* <div className="flex gap-2 lg:hidden ml-auto">
             <Button
               variant="outline"
               size="icon"
@@ -61,7 +61,7 @@ export function FeaturedProducts({
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Mobile - horizontal scroll */}
@@ -70,7 +70,7 @@ export function FeaturedProducts({
           className="flex gap-4 overflow-x-auto scroll-smooth hide-scroll pb-4 pr-6 -ml-1 lg:hidden"
         >
           {products.map((product, index) => (
-            <div key={index} className="min-w-[250px] shrink-0">
+            <div key={index} className="max-w-[320px] shrink-0">
               <Link href={"/products/productDetails"}>
                 <ProductCard {...product} />
               </Link>

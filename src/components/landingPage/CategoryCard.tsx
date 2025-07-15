@@ -16,7 +16,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   itemCount,
 }) => {
   return (
-    <Card className="group rounded-none p-0 bg-transparent overflow-hidden border-0 shadow-none">
+    <Card className="group w-full rounded-none p-0 bg-transparent overflow-hidden border-0 shadow-none">
       {/* Image Section */}
       <div className="relative w-full h-96 overflow-hidden">
         <img

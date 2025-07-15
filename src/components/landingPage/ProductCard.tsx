@@ -26,7 +26,7 @@ export function ProductCard({
 
   // Grid view (original layout)
   return (
-    <Card className=" border gap-2 bg-white p-3 shadow-none rounded-none dark:border-gray-700 dark:bg-gray-800">
+    <div className="w-full border gap-2 bg-white p-3 shadow-none rounded-none dark:border-gray-700 dark:bg-gray-800">
       <div className="h-56 w-full relative">
         <img className="w-full h-full object-cover " src={image} alt={title} />
         {badge && (
@@ -36,7 +36,7 @@ export function ProductCard({
         )}
       </div>
 
-      <CardContent className="pt-2 p-0">
+      <div className="pt-2 p-0">
         <div className="mb-2 flex items-center justify-between gap-4">
           {category && (
             <p className="bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 text-xs font-medium">
@@ -84,22 +84,6 @@ export function ProductCard({
           </p>
         </div>
 
-        {/* <ul className="mt-2 flex items-center gap-4">
-          <li className="flex items-center gap-2">
-            <Truck className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Fast Delivery
-            </p>
-          </li>
-
-          <li className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Best Price
-            </p>
-          </li>
-        </ul> */}
-
         <div className="mt-4 flex flex-col justify-between gap-4">
           <div className="flex items-center gap-2">
             <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
@@ -117,7 +101,7 @@ export function ProductCard({
             Add to cart
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
