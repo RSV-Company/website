@@ -98,7 +98,7 @@ const ProductsPage = () => {
               </SelectContent>
             </Select>
 
-            <div className="flex border rounded-md">
+            {/* <div className="flex border rounded-md">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -113,7 +113,7 @@ const ProductsPage = () => {
               >
                 <List className="h-4 w-4" />
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
 

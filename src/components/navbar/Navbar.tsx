@@ -18,12 +18,12 @@ const Navbar = () => {
     <div className="font-inter">
       <TopBanner />
 
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-white shadow-sm px-4 sm:px-6 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
+            <div className="flex items-left">
+              <Link href="/" className="flex items-left">
                 <span
                   className="text-2xl font-bold text-green-600"
                   style={{ fontFamily: "Inter, sans-serif" }}

@@ -124,3 +124,13 @@
 button {
   cursor: pointer;
 }
+
+.hide-scroll {
+  overflow: auto; /* Enables scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.hide-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}

@@ -2,35 +2,38 @@
 import React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface CategoryCardProps {
   imageUrl: string;
   title: string;
   itemCount: number;
-  items: string;
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({
   imageUrl,
   title,
   itemCount,
-  items,
 }) => {
   return (
-    <Card className="overflow-hidden py-0 gap-0">
-      <div className="relative w-full h-58">
+    <Card className="group rounded-none p-0 bg-transparent overflow-hidden border-0 shadow-none">
+      {/* Image Section */}
+      <div className="relative w-full h-96 overflow-hidden">
         <img
           src={imageUrl}
           alt={title}
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent px-4 py-2 text-white">
-          <h3 className="text-sm font-semibold">{title}</h3>
-          <p className="text-xs">{itemCount} items</p>
-        </div>
       </div>
-      <CardContent className="py-4 px-4">
-        <h3 className="text-sm text-gray-800">{items}</h3>
+
+      {/* Content Section */}
+      <CardContent className="text-center">
+        <h3 className="text-xl font-bold mb-4 uppercase tracking-wide text-gray-900">
+          {title}
+        </h3>
+        <Button className="bg-primary hover:bg-gray-800 text-white font-semibold px-8 py-3 rounded-full text-sm uppercase tracking-wide transition-colors duration-200">
+          Shop now
+        </Button>
       </CardContent>
     </Card>
   );
