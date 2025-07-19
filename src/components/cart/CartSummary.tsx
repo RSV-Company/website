@@ -7,10 +7,10 @@ import { ShoppingBag, Tag, X, Shield, Truck, RotateCcw } from "lucide-react";
 import Separator from "../tabs/Separator";
 
 interface CartSummaryProps {
-  subtotal: number;
-  discount: number;
-  shipping: number;
-  tax: number;
+  subtotal?: number;
+  discount?: number;
+  shipping?: number;
+  tax?: number;
   total: number;
   promoCode: string;
   appliedPromo: string | null;
@@ -53,29 +53,29 @@ export function CartSummary({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span>Subtotal</span>
             <span className="font-medium">${subtotal.toFixed(2)}</span>
-          </div>
+          </div> */}
 
-          {discount > 0 && (
+          {/* {discount > 0 && (
             <div className="flex justify-between text-sm text-green-600">
               <span>Discount</span>
               <span className="font-medium">-${discount.toFixed(2)}</span>
             </div>
-          )}
+          )} */}
 
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span>Shipping</span>
             <span className="font-medium">
               {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
             </span>
-          </div>
+          </div> */}
 
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span>Tax</span>
             <span className="font-medium">${tax.toFixed(2)}</span>
-          </div>
+          </div> */}
 
           <Separator />
 
@@ -87,7 +87,7 @@ export function CartSummary({
       </Card>
 
       {/* Promo Code */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Tag className="h-4 w-4" />
@@ -133,7 +133,7 @@ export function CartSummary({
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Checkout Button */}
       <Button

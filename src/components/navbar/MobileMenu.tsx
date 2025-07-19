@@ -4,7 +4,7 @@ import { ChevronDown, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const MobileMenu = ({ isOpen, onClose }: any) => {
+const MobileMenu = ({ isOpen, onClose, categories }: any) => {
   const [expandedCategory, setExpandedCategory] = useState(null);
 
   const menuItems = [
@@ -85,20 +85,19 @@ const MobileMenu = ({ isOpen, onClose }: any) => {
                   )}
                 </button>
 
-                {expandedCategory === item.name &&
-                  item.subcategories.length > 0 && (
-                    <div className="pl-4 space-y-2">
-                      {item.subcategories.map((subcategory: any) => (
-                        <a
-                          key={subcategory}
-                          href="#"
-                          className="block py-2 text-sm text-gray-600 hover:text-green-600"
-                        >
-                          {subcategory}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                {expandedCategory === item.name && categories.length > 0 && (
+                  <div className="pl-4 space-y-2">
+                    {categories.map((ct: any) => (
+                      <Link
+                        key={ct.id}
+                        href={`/products/?category=${ct.id}`}
+                        className="block py-2 text-sm text-gray-600 hover:text-green-600"
+                      >
+                        {ct.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { featuredCategories } from "@/const/products";
 import { ShoppingCart, ArrowRight, Heart, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function EmptyCart() {
+  const router = useRouter();
   const quickActions = [
     {
       icon: Heart,
@@ -41,14 +43,14 @@ export function EmptyCart() {
           <Button
             size="lg"
             className="mb-8 h-12 px-8 text-lg font-semibold"
-            onClick={() => console.log("Navigate to shop")}
+            onClick={() => router.push("/products")}
           >
             Start Shopping
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             {quickActions.map((action, index) => (
               <Button
                 key={index}
@@ -63,10 +65,10 @@ export function EmptyCart() {
                 </div>
               </Button>
             ))}
-          </div>
+          </div> */}
 
           {/* Featured Categories */}
-          <div className="border-t pt-8">
+          {/* <div className="border-t pt-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
               Popular Categories
             </h2>
@@ -89,7 +91,7 @@ export function EmptyCart() {
                 </Button>
               ))}
             </div>
-          </div>
+          </div> */}
         </Card>
       </div>
     </div>

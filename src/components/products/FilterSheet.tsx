@@ -26,29 +26,23 @@ interface FilterSheetProps {
   filters: Filters;
   updateFilter: (key: keyof Filters, value: any) => void;
   clearFilters: () => void;
-  activeFiltersCount: number;
-  filterOptions: {
-    categories: string[];
-    brands: string[];
-    tags: string[];
-    colors: string[];
-    sizes: string[];
-  };
+  // activeFiltersCount: number;
+  filterOptions: any;
 }
 
 const FilterSheet = ({
   filters,
   updateFilter,
   clearFilters,
-  activeFiltersCount,
+  // activeFiltersCount,
   filterOptions,
 }: FilterSheetProps) => {
   const handleArrayFilter = (
     key: keyof Filters,
-    value: string,
+    value: string, // Changed from string | number to just string for UUIDs
     checked: boolean
   ) => {
-    const currentArray = filters[key] as string[];
+    const currentArray = filters[key] as string[]; // UUIDs are strings
     if (checked) {
       updateFilter(key, [...currentArray, value]);
     } else {
@@ -65,14 +59,6 @@ const FilterSheet = ({
         <Button variant="outline" className="relative">
           <Filter className="h-4 w-4 mr-2" />
           Filters
-          {activeFiltersCount > 0 && (
-            <Badge
-              variant="secondary"
-              className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-            >
-              {activeFiltersCount}
-            </Badge>
-          )}
         </Button>
       </SheetTrigger>
       <SheetContent className="w-80 overflow-y-auto">
@@ -107,112 +93,153 @@ const FilterSheet = ({
           <Separator />
 
           {/* Categories */}
-          <div>
-            <Label className="text-sm font-medium">Categories</Label>
-            <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
-              {filterOptions.categories.map((category) => (
-                <div key={category} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`category-${category}`}
-                    checked={filters.category.includes(category)}
-                    onCheckedChange={(checked) =>
-                      handleArrayFilter(
-                        "category",
-                        category,
-                        checked as boolean
+          {filterOptions?.categories &&
+            Array.isArray(filterOptions.categories) &&
+            filterOptions.categories.length > 0 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium">Categories</Label>
+                  <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
+                    {filterOptions.categories.map(
+                      (category: { id: string; name: string }) => (
+                        <div
+                          key={category.id}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox
+                            id={`category-${category.id}`}
+                            checked={
+                              filters.category?.includes(category.id) || false
+                            }
+                            onCheckedChange={(checked) =>
+                              handleArrayFilter(
+                                "category",
+                                category.id, // This is now a UUID string
+                                checked as boolean
+                              )
+                            }
+                          />
+                          <Label
+                            htmlFor={`category-${category.id}`}
+                            className="text-sm"
+                          >
+                            {category.name}
+                          </Label>
+                        </div>
                       )
-                    }
-                  />
-                  <Label htmlFor={`category-${category}`} className="text-sm">
-                    {category}
-                  </Label>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
+                <Separator />
+              </>
+            )}
 
           {/* Brands */}
-          <div>
-            <Label className="text-sm font-medium">Brands</Label>
-            <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
-              {filterOptions.brands.map((brand) => (
-                <div key={brand} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`brand-${brand}`}
-                    checked={filters.brand.includes(brand)}
-                    onCheckedChange={(checked) =>
-                      handleArrayFilter("brand", brand, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={`brand-${brand}`} className="text-sm">
-                    {brand}
-                  </Label>
+          {filterOptions?.brands &&
+            Array.isArray(filterOptions.brands) &&
+            filterOptions.brands.length > 0 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium">Brands</Label>
+                  <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
+                    {filterOptions.brands.map(
+                      (brand: { id: string; name: string }) => (
+                        <div
+                          key={brand.id}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox
+                            id={`brand-${brand.id}`}
+                            checked={filters.brand?.includes(brand.id) || false}
+                            onCheckedChange={
+                              (checked) =>
+                                handleArrayFilter(
+                                  "brand",
+                                  brand.id,
+                                  checked as boolean
+                                ) // This is now a UUID string
+                            }
+                          />
+                          <Label
+                            htmlFor={`brand-${brand.id}`}
+                            className="text-sm"
+                          >
+                            {brand.name}
+                          </Label>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
+                <Separator />
+              </>
+            )}
 
           {/* Colors */}
-          {filterOptions.colors.length > 0 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium">Colors</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {filterOptions.colors.map((color) => (
-                    <div key={color} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`color-${color}`}
-                        checked={filters.colors?.includes(color) || false}
-                        onCheckedChange={(checked) =>
-                          handleArrayFilter("colors", color, checked as boolean)
-                        }
-                      />
-                      <Label
-                        htmlFor={`color-${color}`}
-                        className="text-sm capitalize"
-                      >
-                        {color}
-                      </Label>
-                    </div>
-                  ))}
+          {filterOptions?.colors &&
+            Array.isArray(filterOptions.colors) &&
+            filterOptions.colors.length > 0 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium">Colors</Label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {filterOptions.colors.map((color: string) => (
+                      <div key={color} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`color-${color}`}
+                          checked={filters.colors?.includes(color) || false}
+                          onCheckedChange={(checked) =>
+                            handleArrayFilter(
+                              "colors",
+                              color,
+                              checked as boolean
+                            )
+                          }
+                        />
+                        <Label
+                          htmlFor={`color-${color}`}
+                          className="text-sm capitalize"
+                        >
+                          {color}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <Separator />
-            </>
-          )}
+                <Separator />
+              </>
+            )}
 
           {/* Sizes */}
-          {filterOptions.sizes.length > 0 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium">Sizes</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {filterOptions.sizes.map((size) => (
-                    <div key={size} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`size-${size}`}
-                        checked={filters.sizes?.includes(size) || false}
-                        onCheckedChange={(checked) =>
-                          handleArrayFilter("sizes", size, checked as boolean)
-                        }
-                      />
-                      <Label
-                        htmlFor={`size-${size}`}
-                        className="text-sm uppercase"
-                      >
-                        {size}
-                      </Label>
-                    </div>
-                  ))}
+          {filterOptions?.sizes &&
+            Array.isArray(filterOptions.sizes) &&
+            filterOptions.sizes.length > 0 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium">Sizes</Label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {filterOptions.sizes.map((size: string) => (
+                      <div key={size} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`size-${size}`}
+                          checked={filters.sizes?.includes(size) || false}
+                          onCheckedChange={(checked) =>
+                            handleArrayFilter("sizes", size, checked as boolean)
+                          }
+                        />
+                        <Label
+                          htmlFor={`size-${size}`}
+                          className="text-sm uppercase"
+                        >
+                          {size}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <Separator />
-            </>
-          )}
+                <Separator />
+              </>
+            )}
 
           {/* Rating */}
           <div>

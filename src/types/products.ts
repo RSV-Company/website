@@ -1,23 +1,28 @@
 export interface Product {
   id: string;
   title: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  category: string;
-  brand: string;
-  rating: number;
-  reviews: number;
-  inStock: boolean;
-  tags: string[];
+  slug: string;
   description?: string;
-  colors?: string[];
-  sizes?: string[];
-  discount?: number;
-  isNew?: boolean;
-  isFeatured?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  specification?: string;
+  price: number;
+  discount_price: number;
+  stock_quantity: number;
+  is_featured: boolean;
+  is_best_selling: boolean;
+  category_id?: string;
+  brand_id?: string;
+  rating: number;
+  total_reviews: number;
+  created_at: string;
+  main_image_url: string;
+  category?: {
+    id: string;
+    name: string;
+  };
+  brand?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface Filters {
@@ -27,20 +32,32 @@ export interface Filters {
   priceRange: [number, number];
   rating: number;
   inStock: boolean;
-  tags: string[];
   colors?: string[];
   sizes?: string[];
 }
 
-export interface SortOption {
-  value: string;
-  label: string;
-}
-
+export type SortOption =
+  | "featured"
+  | "newest"
+  | "price-low"
+  | "price-high"
+  | "rating"
+  | "popularity";
 export interface FilterOption {
   value: string;
   label: string;
   count?: number;
+}
+
+export interface Filters {
+  search: string;
+  category: string[];
+  brand: string[];
+  priceRange: [number, number];
+  rating: number;
+  inStock: boolean;
+  colors?: string[];
+  sizes?: string[];
 }
 
 export interface ProductsResponse {

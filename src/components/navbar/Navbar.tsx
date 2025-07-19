@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TopBanner from "./TopBanner";
 import NavigationMenu from "./NavigationMenu";
 import { Menu, Search } from "lucide-react";
@@ -9,10 +9,29 @@ import CartIcon from "./CartIcon";
 import SearchOverlay from "./SearchOverlay";
 import MobileMenu from "./MobileMenu";
 import Link from "next/link";
+import { supabase } from "@/config/client";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [categories, setCategories] = useState<any>([]);
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase.from("categories").select("*");
+
+    setCategories(data);
+
+    if (error) {
+      console.error("Error fetching categories:", error.message);
+      return [];
+    }
+
+    return categories;
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <div className="font-inter">
@@ -34,7 +53,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <NavigationMenu />
+            <NavigationMenu categories={categories} />
 
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2">
@@ -73,6 +92,7 @@ const Navbar = () => {
         <MobileMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
+          categories={categories}
         />
       </header>
     </div>

@@ -4,31 +4,20 @@ import Link from "next/link";
 import { products } from "@/const/products";
 import { ProductCard } from "./ProductCard";
 import { useRef } from "react";
-import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Product } from "@/types/products";
 
 export function FeaturedProducts({
   title,
   description,
+  products,
+  loading,
 }: {
   title?: string;
   description?: string;
+  products: Product[];
+  loading: boolean;
 }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const scrollLeft = () => {
-    scrollContainerRef.current?.scrollBy({
-      left: -320,
-      behavior: "smooth",
-    });
-  };
-
-  const scrollRight = () => {
-    scrollContainerRef.current?.scrollBy({
-      left: 320,
-      behavior: "smooth",
-    });
-  };
 
   return (
     <section className="w-full px-3 md:px-16 py-6 md:py-16">
@@ -43,25 +32,6 @@ export function FeaturedProducts({
                 "Discover this week’s top picks—handpicked favorites just for you."}
             </p>
           </div>
-
-          {/* <div className="flex gap-2 lg:hidden ml-auto">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={scrollLeft}
-              className="rounded-full border-gray-300 hover:border-gray-400"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={scrollRight}
-              className="rounded-full border-gray-300 hover:border-gray-400"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div> */}
         </div>
 
         {/* Mobile - horizontal scroll */}
@@ -71,9 +41,7 @@ export function FeaturedProducts({
         >
           {products.map((product, index) => (
             <div key={index} className="max-w-[320px] shrink-0">
-              <Link href={"/products/productDetails"}>
-                <ProductCard {...product} />
-              </Link>
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
@@ -81,9 +49,7 @@ export function FeaturedProducts({
         {/* Desktop - grid layout */}
         <div className="hidden lg:grid grid-cols-4 gap-6">
           {products.map((product, index) => (
-            <Link key={index} href={"/products/productDetails"}>
-              <ProductCard {...product} />
-            </Link>
+            <ProductCard product={product} />
           ))}
         </div>
       </div>

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Grid, List } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,19 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProducts } from "@/hooks/useProducts";
 import { ViewMode } from "@/types/products";
 import FilterSheet from "./FilterSheet";
 import ActiveFilters from "./ActiveFilters";
 import ProductGrid from "./ProductGrid";
-import { allMockProducts } from "@/const/products";
+import { useSupabaseProducts } from "@/hooks/useProducts";
 
 const ProductsPage = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+
   const {
     products,
-    setProducts,
-    filteredProducts,
     filters,
     updateFilter,
     clearFilters,
@@ -31,26 +28,21 @@ const ProductsPage = () => {
     sortBy,
     setSortBy,
     isLoading,
-    setIsLoading,
-    activeFiltersCount,
+    error,
+    // activeFiltersCount,
     filterOptions,
-  } = useProducts();
+  } = useSupabaseProducts();
 
-  // Fetch products - replace with your API call
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      try {
-        setProducts(allMockProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [setProducts, setIsLoading]);
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Error</h2>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen max-w-7xl mx-auto bg-background">
@@ -59,7 +51,7 @@ const ProductsPage = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Products</h1>
           <p className="text-muted-foreground">
-            Showing {filteredProducts.length} of {products.length} products
+            Showing {products?.length} products
           </p>
         </div>
 
@@ -80,7 +72,7 @@ const ProductsPage = () => {
               filters={filters}
               updateFilter={updateFilter}
               clearFilters={clearFilters}
-              activeFiltersCount={activeFiltersCount}
+              // activeFiltersCount={activeFiltersCount}
               filterOptions={filterOptions}
             />
 
@@ -97,23 +89,6 @@ const ProductsPage = () => {
                 <SelectItem value="popularity">Most Popular</SelectItem>
               </SelectContent>
             </Select>
-
-            {/* <div className="flex border rounded-md">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div> */}
           </div>
         </div>
 
@@ -122,12 +97,12 @@ const ProductsPage = () => {
           filters={filters}
           removeFilter={removeFilter}
           clearFilters={clearFilters}
-          activeFiltersCount={activeFiltersCount}
+          // activeFiltersCount={activeFiltersCount}
         />
 
         {/* Products Grid */}
         <ProductGrid
-          products={filteredProducts}
+          products={products}
           viewMode={viewMode}
           isLoading={isLoading}
           onClearFilters={clearFilters}

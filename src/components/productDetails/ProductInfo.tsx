@@ -14,11 +14,17 @@ import {
 import { useState } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { getDiscountPercentage } from "@/lib/utils";
+import { useCart } from "react-use-cart";
+import { useRouter } from "next/navigation";
 
 const ProductInfo = ({ product }: any) => {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+  const { addItem } = useCart();
+  const router = useRouter();
+  // const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  // const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
+
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const handleQuantityChange = (type: string) => {
@@ -32,8 +38,8 @@ const ProductInfo = ({ product }: any) => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
-        <p className="text-lg text-gray-600 mt-2">{product.brand}</p>
+        <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
+        <p className="text-lg text-gray-600 mt-2">{product.brand.name}</p>
       </div>
 
       <div className="flex items-center space-x-4">
@@ -50,26 +56,28 @@ const ProductInfo = ({ product }: any) => {
           ))}
         </div>
         <span className="text-sm text-gray-600">
-          ({product.reviews} reviews)
+          ({product.total_reviews} reviews)
         </span>
       </div>
 
       <div className="flex items-center space-x-4">
         <span className="text-3xl font-bold text-gray-900">
-          ${product.price}
+          ${product.discount_price}
         </span>
-        {product.originalPrice && (
+        {product.price && (
           <span className="text-lg text-gray-500 line-through">
-            ${product.originalPrice}
+            ${product.price}
           </span>
         )}
-        {product.discount && (
-          <Badge variant="destructive">{product.discount}% OFF</Badge>
+        {product.discount_price && (
+          <Badge variant="destructive">
+            {getDiscountPercentage(product.price, product.discount_price)}% OFF
+          </Badge>
         )}
       </div>
 
       <div className="space-y-4">
-        <div>
+        {/* <div>
           <h3 className="text-sm font-medium text-gray-900 mb-2">Color</h3>
           <div className="flex space-x-2">
             {product.colors.map((color: string) => (
@@ -104,9 +112,9 @@ const ProductInfo = ({ product }: any) => {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <h3 className="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
           <div className="flex items-center space-x-2">
             <button
@@ -125,15 +133,27 @@ const ProductInfo = ({ product }: any) => {
               <Plus className="h-4 w-4" />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="flex space-x-4">
-        <Button className="flex-1" size="lg">
+        <Button
+          onClick={() => {
+            addItem({
+              ...product,
+              price: product.discount_price,
+              originalPrice: product.price,
+              main_image_url: product.images[0].image_url,
+            });
+            router.push("/products");
+          }}
+          className="flex-1"
+          size="lg"
+        >
           <ShoppingCart className="h-5 w-5 mr-2" />
           Add to Cart
         </Button>
-        <Button
+        {/* <Button
           variant="outline"
           size="lg"
           onClick={() => setIsWishlisted(!isWishlisted)}
@@ -146,7 +166,7 @@ const ProductInfo = ({ product }: any) => {
         </Button>
         <Button variant="outline" size="lg">
           <Share2 className="h-5 w-5" />
-        </Button>
+        </Button> */}
       </div>
 
       <div className="space-y-4 pt-4">

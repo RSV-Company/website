@@ -11,6 +11,8 @@ interface CartItemProps {
 }
 
 export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
+  console.log(item);
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -26,11 +28,6 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
     onRemove(item.id);
   };
 
-  const handleMoveToWishlist = () => {
-    setIsFavorited(!isFavorited);
-    // In a real app, this would add to wishlist and remove from cart
-  };
-
   return (
     <Card className="p-6 border-0 shadow-none">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -38,8 +35,8 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
         <div className="relative flex-shrink-0 max-w-[6rem] sm:max-w-none">
           {" "}
           <img
-            src={item.image}
-            alt={item.name}
+            src={item.main_image_url}
+            alt={item.title}
             className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg"
           />
           {item.originalPrice && (
@@ -47,7 +44,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
               SALE
             </Badge>
           )}
-          {!item.inStock && (
+          {item.stock_quantity < 0 && (
             <Badge
               variant="secondary"
               className="absolute top-2 right-2 text-xs"
@@ -62,7 +59,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
             <div className="flex-1">
               <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
-                {item.name}
+                {item.title}
               </h3>
 
               {/* Rating */}
@@ -70,19 +67,19 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
                 <div className="flex items-center mt-1 text-sm text-gray-600">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="ml-1">{item.rating}</span>
-                  {item.reviews && (
+                  {item.total_reviews && (
                     <span className="ml-1">
-                      ({item.reviews.toLocaleString()} reviews)
+                      ({item.total_reviews.toLocaleString()} reviews)
                     </span>
                   )}
                 </div>
               )}
 
               {/* Variants */}
-              <div className="flex gap-4 mt-2 text-sm text-gray-600">
+              {/* <div className="flex gap-4 mt-2 text-sm text-gray-600">
                 {item.color && <span>Color: {item.color}</span>}
                 {item.size && <span>Size: {item.size}</span>}
-              </div>
+              </div> */}
 
               {/* Price */}
               <div className="flex items-center gap-2 mt-2">
@@ -99,7 +96,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
 
             {/* Actions */}
             <div className="flex sm:flex-col gap-2">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleMoveToWishlist}
@@ -111,7 +108,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
                   }`}
                 />
                 <span className="hidden sm:inline">Save</span>
-              </Button>
+              </Button> */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -147,7 +144,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleQuantityChange(item.quantity + 1)}
-                  disabled={isUpdating || !item.inStock}
+                  disabled={isUpdating || item.stock_quantity < 1}
                   className="h-8 w-8 p-0"
                 >
                   <Plus className="h-4 w-4" />
@@ -168,7 +165,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
           </div>
 
           {/* Stock Status */}
-          {!item.inStock && (
+          {item.stock_quantity < 1 && (
             <div className="mt-2 text-sm text-red-600">
               This item is currently out of stock. You can keep it in your cart
               and we'll notify you when it's available.

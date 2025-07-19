@@ -33,13 +33,13 @@ export function RecommendedProducts() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product, index) => (
           <Link key={index} href={"/products/productDetails"}>
             <ProductCard {...product} />
           </Link>
         ))}
-      </div>
+      </div> */}
 
       {/* Mobile View All Button */}
       <div className="mt-6 text-center sm:hidden">

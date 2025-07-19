@@ -1,159 +1,230 @@
 import { useState, useEffect, useMemo } from "react";
-import { Product, Filters, SortBy } from "@/types/products";
+import { Product, Filters, SortOption } from "@/types/products";
+import { supabase } from "@/config/client";
 
-export const useProducts = (initialProducts: Product[] = []) => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+export const useSupabaseProducts = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [filters, setFilters] = useState<Filters>({
     search: "",
-    category: [],
-    brand: [],
+    category: [], // This should be string[] for UUIDs
+    brand: [], // This should be string[] for UUIDs
     priceRange: [0, 1000],
     rating: 0,
     inStock: false,
+    colors: [],
+    sizes: [],
+  });
+
+  const [sortBy, setSortBy] = useState<SortOption>("featured");
+
+  // Fetch products with applied filters and sorting
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      let query = supabase.from("products").select(`
+          *,
+          categories:category_id(id, name),
+          brands:brand_id(id, name)
+        `);
+
+      if (filters.search && filters.search.trim()) {
+        const searchTerm = filters.search.trim();
+
+        query = query.or(
+          `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`
+        );
+      }
+
+      // Apply category filter - Fixed: Ensure we're using the correct ID format
+      if (filters.category && filters.category.length > 0) {
+        query = query.in("category_id", filters.category);
+      }
+
+      // Apply brand filter - Fixed: Ensure we're using the correct ID format
+      if (filters.brand && filters.brand.length > 0) {
+        query = query.in("brand_id", filters.brand);
+      }
+
+      // Apply price range filter - Fixed: Uncommented and improved
+      if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) {
+        query = query
+          .gte("price", filters.priceRange[0])
+          .lte("price", filters.priceRange[1]);
+      }
+
+      // Apply rating filter
+      if (filters.rating > 0) {
+        query = query.gte("rating", filters.rating);
+      }
+
+      // Apply stock filter
+      if (filters.inStock) {
+        query = query.gt("stock_quantity", 0);
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case "featured":
+          query = query.order("is_featured", { ascending: false });
+          break;
+        case "newest":
+          query = query.order("created_at", { ascending: false });
+          break;
+        case "price-low":
+          query = query.order("price", { ascending: true });
+          break;
+        case "price-high":
+          query = query.order("price", { ascending: false });
+          break;
+        case "rating":
+          query = query.order("rating", { ascending: false });
+          break;
+        case "popularity":
+          query = query.order("total_reviews", { ascending: false });
+          break;
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Database error:", error);
+        throw error;
+      }
+
+      setProducts(data || []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch filter options (categories, brands)
+  const [filterOptions, setFilterOptions] = useState<any>({
+    categories: [],
+    brands: [],
     tags: [],
     colors: [],
     sizes: [],
   });
-  const [sortBy, setSortBy] = useState<SortBy>("featured");
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Calculate filtered and sorted products
-  const filteredProducts = useMemo(() => {
-    let filtered = products.filter((product) => {
-      const matchesSearch =
-        product.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.description
-          ?.toLowerCase()
-          .includes(filters.search.toLowerCase());
-      const matchesCategory =
-        filters.category.length === 0 ||
-        filters.category.includes(product.category);
-      const matchesBrand =
-        filters.brand.length === 0 || filters.brand.includes(product.brand);
-      const matchesPrice =
-        product.price >= filters.priceRange[0] &&
-        product.price <= filters.priceRange[1];
-      const matchesRating = product.rating >= filters.rating;
-      const matchesStock = !filters.inStock || product.inStock;
-      const matchesTags =
-        filters.tags.length === 0 ||
-        filters.tags.some((tag) => product.tags.includes(tag));
-      const matchesColors =
-        filters.colors?.length === 0 ||
-        filters.colors?.some((color) => product.colors?.includes(color));
-      const matchesSizes =
-        filters.sizes?.length === 0 ||
-        filters.sizes?.some((size) => product.sizes?.includes(size));
+  const fetchFilterOptions = async () => {
+    try {
+      // Fetch categories
+      const { data: categories, error: categoriesError } = await supabase
+        .from("categories")
+        .select("id, name")
+        .order("name");
 
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesBrand &&
-        matchesPrice &&
-        matchesRating &&
-        matchesStock &&
-        matchesTags &&
-        matchesColors &&
-        matchesSizes
-      );
-    });
-
-    // Sort products
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "rating":
-          return b.rating - a.rating;
-        case "newest":
-          return (
-            new Date(b.createdAt || 0).getTime() -
-            new Date(a.createdAt || 0).getTime()
-          );
-        case "popularity":
-          return b.reviews - a.reviews;
-        default:
-          return 0;
+      if (categoriesError) {
+        console.error("Error fetching categories:", categoriesError);
       }
-    });
 
-    return filtered;
-  }, [products, filters, sortBy]);
+      // Fetch brands
+      const { data: brands, error: brandsError } = await supabase
+        .from("brands")
+        .select("id, name")
+        .order("name");
 
-  // Get unique filter options
-  const filterOptions = useMemo(() => {
-    const categories = [...new Set(products.map((p) => p.category))];
-    const brands = [...new Set(products.map((p) => p.brand))];
-    const tags = [...new Set(products.flatMap((p) => p.tags))];
-    const colors = [...new Set(products.flatMap((p) => p.colors || []))];
-    const sizes = [...new Set(products.flatMap((p) => p.sizes || []))];
+      if (brandsError) {
+        console.error("Error fetching brands:", brandsError);
+      }
 
-    return { categories, brands, tags, colors, sizes };
-  }, [products]);
+      setFilterOptions({
+        categories: categories || [],
+        brands: brands || [],
+        tags: [],
+        colors: [],
+        sizes: [],
+      });
+    } catch (err) {
+      console.error("Error fetching filter options:", err);
+    }
+  };
 
-  // Update filter
+  // Update a specific filter
   const updateFilter = (key: keyof Filters, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   // Clear all filters
   const clearFilters = () => {
     setFilters({
       search: "",
-      category: [],
-      brand: [],
+      category: [], // Reset to empty array
+      brand: [], // Reset to empty array
       priceRange: [0, 1000],
       rating: 0,
       inStock: false,
-      tags: [],
       colors: [],
       sizes: [],
     });
   };
 
-  // Count active filters
-  const activeFiltersCount =
-    filters.category.length +
-    filters.brand.length +
-    filters.tags.length +
-    (filters.colors?.length || 0) +
-    (filters.sizes?.length || 0) +
-    (filters.rating > 0 ? 1 : 0) +
-    (filters.inStock ? 1 : 0);
-
-  // Remove specific filter
-  const removeFilter = (filterType: keyof Filters, value?: string) => {
-    if (filterType === "rating" || filterType === "inStock") {
-      setFilters((prev) => ({
-        ...prev,
-        [filterType]: filterType === "rating" ? 0 : false,
-      }));
-    } else if (Array.isArray(filters[filterType]) && value) {
-      setFilters((prev) => ({
-        ...prev,
-        [filterType]: (prev[filterType] as string[]).filter(
-          (item) => item !== value
-        ),
-      }));
+  // Remove a specific filter
+  const removeFilter = (key: keyof Filters, value?: string) => {
+    if (key === "search") {
+      updateFilter(key, "");
+    } else if (key === "rating") {
+      updateFilter(key, 0);
+    } else if (key === "inStock") {
+      updateFilter(key, false);
+    } else if (key === "priceRange") {
+      updateFilter(key, [0, 1000]);
+    } else if (Array.isArray(filters[key]) && value) {
+      const currentArray = filters[key] as string[];
+      updateFilter(
+        key,
+        currentArray.filter((item) => item !== value)
+      );
     }
   };
 
+  // Calculate active filters count
+  // const activeFiltersCount = useMemo(() => {
+  //   let count = 0;
+  //   // if (filters.search && filters.search.trim()) count++;
+  //   if (filters.category.length > 0) count++;
+  //   if (filters.brand.length > 0) count++;
+  //   if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) count++;
+  //   if (filters.rating > 0) count++;
+  //   if (filters.inStock) count++;
+  //   if (filters.colors && filters.colors.length > 0) count++;
+  //   if (filters.sizes && filters.sizes.length > 0) count++;
+  //   return count;
+  // }, [filters]);
+
+  // Fetch products when filters or sorting changes
+  useEffect(() => {
+    fetchProducts();
+  }, [filters, sortBy]);
+
+  // Fetch filter options on mount
+  useEffect(() => {
+    fetchFilterOptions();
+  }, []);
+
   return {
     products,
-    setProducts,
-    filteredProducts,
     filters,
-    setFilters,
     updateFilter,
     clearFilters,
     removeFilter,
     sortBy,
     setSortBy,
     isLoading,
-    setIsLoading,
-    activeFiltersCount,
+    error,
+    // activeFiltersCount,
     filterOptions,
+    refetch: fetchProducts,
   };
 };

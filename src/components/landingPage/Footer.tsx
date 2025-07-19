@@ -1,9 +1,30 @@
-// components/Footer.tsx
+"use client";
 
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/config/client";
 
 export function Footer() {
+  const [categories, setCategories] = useState<any>([]);
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase.from("categories").select("*");
+
+    setCategories(data);
+
+    if (error) {
+      console.error("Error fetching categories:", error.message);
+      return [];
+    }
+
+    return categories;
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   return (
     <footer className="w-full bg-gray-900 text-gray-400 px-6 py-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -20,29 +41,18 @@ export function Footer() {
         <div>
           <h3 className="text-white text-sm font-semibold mb-3">Shop</h3>
           <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/collections" className="hover:text-white">
-                All Products
-              </Link>
-            </li>
-            <li>
-              <Link href="/collections/kitchen" className="hover:text-white">
-                Kitchen
-              </Link>
-            </li>
-            <li>
-              <Link href="/collections/bathroom" className="hover:text-white">
-                Bathroom
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/collections/living-room"
-                className="hover:text-white"
-              >
-                Living Room
-              </Link>
-            </li>
+            {categories?.map((ct: any) => {
+              return (
+                <li key={ct.id}>
+                  <Link
+                    href={`/products?category=${ct.id}`}
+                    className="hover:text-white"
+                  >
+                    {ct.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

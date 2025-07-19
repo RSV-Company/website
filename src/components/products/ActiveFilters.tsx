@@ -7,24 +7,23 @@ interface ActiveFiltersProps {
   filters: Filters;
   removeFilter: (filterType: keyof Filters, value?: string) => void;
   clearFilters: () => void;
-  activeFiltersCount: number;
+  // activeFiltersCount: number;
 }
 
 const ActiveFilters = ({
   filters,
   removeFilter,
   clearFilters,
-  activeFiltersCount,
-}: ActiveFiltersProps) => {
-  if (activeFiltersCount === 0) return null;
+}: // activeFiltersCount,
+ActiveFiltersProps) => {
+  // if (activeFiltersCount === 0) return null;
 
   return (
     <div className="mb-6">
       <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-sm text-muted-foreground">Active filters:</span>
+        {/* <span className="text-sm text-muted-foreground">Active filters:</span> */}
 
-        {/* Categories */}
-        {filters.category.map((category) => (
+        {/* {filters.category.map((category) => (
           <Badge
             key={`category-${category}`}
             variant="secondary"
@@ -36,7 +35,6 @@ const ActiveFilters = ({
           </Badge>
         ))}
 
-        {/* Brands */}
         {filters.brand.map((brand) => (
           <Badge
             key={`brand-${brand}`}
@@ -49,7 +47,6 @@ const ActiveFilters = ({
           </Badge>
         ))}
 
-        {/* Tags */}
         {filters.tags.map((tag) => (
           <Badge
             key={`tag-${tag}`}
@@ -62,7 +59,6 @@ const ActiveFilters = ({
           </Badge>
         ))}
 
-        {/* Colors */}
         {filters.colors?.map((color) => (
           <Badge
             key={`color-${color}`}
@@ -75,7 +71,6 @@ const ActiveFilters = ({
           </Badge>
         ))}
 
-        {/* Sizes */}
         {filters.sizes?.map((size) => (
           <Badge
             key={`size-${size}`}
@@ -88,7 +83,6 @@ const ActiveFilters = ({
           </Badge>
         ))}
 
-        {/* Rating */}
         {filters.rating > 0 && (
           <Badge
             variant="secondary"
@@ -100,7 +94,6 @@ const ActiveFilters = ({
           </Badge>
         )}
 
-        {/* Stock Status */}
         {filters.inStock && (
           <Badge
             variant="secondary"
@@ -112,7 +105,6 @@ const ActiveFilters = ({
           </Badge>
         )}
 
-        {/* Price Range (if not default) */}
         {(filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) && (
           <Badge
             variant="secondary"
@@ -122,7 +114,7 @@ const ActiveFilters = ({
             ${filters.priceRange[0]} - ${filters.priceRange[1]}
             <X className="h-3 w-3 ml-1" />
           </Badge>
-        )}
+        )} */}
 
         <Button
           variant="ghost"
@@ -130,7 +122,7 @@ const ActiveFilters = ({
           onClick={clearFilters}
           className="text-muted-foreground hover:text-foreground"
         >
-          Clear all
+          Clear all filters
         </Button>
       </div>
     </div>

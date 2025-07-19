@@ -2,11 +2,8 @@
 
 import React, { useRef } from "react";
 import CategoryCard from "./CategoryCard";
-import { categories } from "@/const/products";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const ShopByCategory = () => {
+const ShopByCategory = ({ categories }: any) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -65,12 +62,16 @@ const ShopByCategory = () => {
           ref={scrollContainerRef}
           className="flex gap-2 overflow-x-auto scroll-smooth hide-scroll pb-4 pr-6 -ml-1 lg:hidden"
         >
-          {categories.map((category, index) => (
-            <div key={index} className="max-w-[320px] shrink-0">
+          {categories?.map((category: any) => (
+            <div key={category.id} className="max-w-[320px] shrink-0">
               <CategoryCard
-                imageUrl={category.imageUrl}
-                title={category.title}
-                itemCount={category.itemCount}
+                imageUrl={
+                  category.imageUrl ||
+                  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1099&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                }
+                title={category.name}
+                itemCount={category.order}
+                link={category.id}
               />
             </div>
           ))}
@@ -78,12 +79,16 @@ const ShopByCategory = () => {
 
         {/* Grid layout for large screens */}
         <div className="hidden lg:grid grid-cols-4 gap-2">
-          {categories.slice(0, 4).map((category, index) => (
+          {categories?.map((category: any) => (
             <CategoryCard
-              key={index}
-              imageUrl={category.imageUrl}
-              title={category.title}
-              itemCount={category.itemCount}
+              key={category.id}
+              imageUrl={
+                category.imageUrl ||
+                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1099&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              }
+              title={category.name}
+              itemCount={category.order}
+              link={category.id}
             />
           ))}
         </div>

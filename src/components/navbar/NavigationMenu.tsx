@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const NavigationMenu = () => {
+const NavigationMenu = ({ categories }: any) => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
   return (
@@ -25,18 +25,14 @@ const NavigationMenu = () => {
           {item.hasDropdown && hoveredCategory === item.name && (
             <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
               <div className="py-2">
-                {item.subcategories.map((subcategory: any) => (
-                  <a
-                    key={subcategory}
-                    href="#"
+                {categories.map((ct: any) => (
+                  <Link
+                    key={ct.id}
+                    href={`/products/?category=${ct.id}`}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      console.log(`Clicked on ${subcategory}`);
-                    }}
                   >
-                    {subcategory}
-                  </a>
+                    {ct.name}
+                  </Link>
                 ))}
               </div>
             </div>

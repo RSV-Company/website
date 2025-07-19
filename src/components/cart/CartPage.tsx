@@ -9,6 +9,7 @@ import { CartSummary } from "./CartSummary";
 import { RecommendedProducts } from "./RecommendedProducts";
 import { initialCartItems } from "@/const/products";
 import { useRouter } from "next/navigation";
+import { useCart } from "react-use-cart";
 
 export interface CartItemType {
   id: string;
@@ -25,24 +26,28 @@ export interface CartItemType {
 }
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItemType[]>(initialCartItems);
+  const {
+    isEmpty,
+    totalUniqueItems,
+    items,
+    updateItemQuantity,
+    removeItem,
+    cartTotal,
+  } = useCart();
+
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
   const router = useRouter();
 
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    setCartItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
+  // const updateQuantity = (id: string, quantity: number) => {
+  //   if (quantity <= 0) {
+  //     removeItem(id);
+  //     return;
+  //   }
+  //   setCartItems((items) =>
+  //     items.map((item) => (item.id === id ? { ...item, quantity } : item))
+  //   );
+  // };
 
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === "save20") {
@@ -55,16 +60,16 @@ export default function CartPage() {
     setAppliedPromo(null);
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const discount = appliedPromo ? subtotal * 0.2 : 0;
-  const shipping = subtotal > 100 ? 0 : 9.99;
-  const tax = (subtotal - discount) * 0.08;
-  const total = subtotal - discount + shipping + tax;
+  // const subtotal = cartItems.reduce(
+  //   (sum, item) => sum + item.price * item.quantity,
+  //   0
+  // );
+  // const discount = appliedPromo ? subtotal * 0.2 : 0;
+  // const shipping = subtotal > 100 ? 0 : 9.99;
+  // const tax = (subtotal - discount) * 0.08;
+  // const total = subtotal - discount + shipping + tax;
 
-  if (cartItems.length === 0) {
+  if (isEmpty) {
     return <EmptyCart />;
   }
 
@@ -84,7 +89,7 @@ export default function CartPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Cart</h1>
               <p className="text-gray-600 mt-1">
-                {cartItems.length} {cartItems.length === 1 ? "item" : "items"}{" "}
+                {totalUniqueItems} {totalUniqueItems === 1 ? "item" : "items"}{" "}
                 in your cart
               </p>
             </div>
@@ -105,11 +110,11 @@ export default function CartPage() {
                 </h2>
               </div>
               <div className="divide-y">
-                {cartItems.map((item) => (
+                {items.map((item) => (
                   <CartItem
                     key={item.id}
                     item={item}
-                    onUpdateQuantity={updateQuantity}
+                    onUpdateQuantity={updateItemQuantity}
                     onRemove={removeItem}
                   />
                 ))}
@@ -120,11 +125,11 @@ export default function CartPage() {
           {/* Cart Summary */}
           <div className="lg:col-span-1">
             <CartSummary
-              subtotal={subtotal}
-              discount={discount}
-              shipping={shipping}
-              tax={tax}
-              total={total}
+              // subtotal={subtotal}
+              // discount={discount}
+              // shipping={shipping}
+              // tax={tax}
+              total={cartTotal}
               promoCode={promoCode}
               appliedPromo={appliedPromo}
               onPromoChange={setPromoCode}
@@ -135,9 +140,7 @@ export default function CartPage() {
         </div>
 
         {/* Recommended Products */}
-        <div className="mt-12">
-          <RecommendedProducts />
-        </div>
+        <div className="mt-12">{/* <RecommendedProducts /> */}</div>
       </div>
     </div>
   );

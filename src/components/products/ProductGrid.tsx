@@ -28,7 +28,7 @@ const ProductGrid = ({
   }
 
   // No products found
-  if (products.length === 0) {
+  if (products?.length === 0) {
     return (
       <div className="text-center py-16">
         <div className="mb-4">
@@ -55,10 +55,10 @@ const ProductGrid = ({
           : "grid-cols-2"
       }`}
     >
-      {products.map((product) => (
-        <Link key={product.id} href={`/products/${product.id}`}>
-          <ProductCard viewMode={viewMode} {...product} />
-        </Link>
+      {products?.map((product) => (
+        // <Link key={product.id} href={`/products/${product.slug}`}>
+        <ProductCard product={product} viewMode={viewMode} />
+        // </Link>
       ))}
     </div>
   );
