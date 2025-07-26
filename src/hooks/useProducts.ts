@@ -2,14 +2,14 @@ import { useState, useEffect, useMemo } from "react";
 import { Product, Filters, SortOption } from "@/types/products";
 import { supabase } from "@/config/client";
 
-export const useSupabaseProducts = () => {
+export const useSupabaseProducts = (paramCategory: string) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<Filters>({
     search: "",
-    category: [], // This should be string[] for UUIDs
+    category: paramCategory ? [paramCategory] : [], // This should be string[] for UUIDs
     brand: [], // This should be string[] for UUIDs
     priceRange: [0, 1000],
     rating: 0,
@@ -17,6 +17,13 @@ export const useSupabaseProducts = () => {
     colors: [],
     sizes: [],
   });
+
+  useEffect(() => {
+  setFilters((prev) => ({
+    ...prev,
+    category: paramCategory ? [paramCategory] : [],
+  }));
+}, [paramCategory]);
 
   const [sortBy, setSortBy] = useState<SortOption>("featured");
 
@@ -189,26 +196,10 @@ export const useSupabaseProducts = () => {
     }
   };
 
-  // Calculate active filters count
-  // const activeFiltersCount = useMemo(() => {
-  //   let count = 0;
-  //   // if (filters.search && filters.search.trim()) count++;
-  //   if (filters.category.length > 0) count++;
-  //   if (filters.brand.length > 0) count++;
-  //   if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) count++;
-  //   if (filters.rating > 0) count++;
-  //   if (filters.inStock) count++;
-  //   if (filters.colors && filters.colors.length > 0) count++;
-  //   if (filters.sizes && filters.sizes.length > 0) count++;
-  //   return count;
-  // }, [filters]);
-
-  // Fetch products when filters or sorting changes
   useEffect(() => {
     fetchProducts();
   }, [filters, sortBy]);
 
-  // Fetch filter options on mount
   useEffect(() => {
     fetchFilterOptions();
   }, []);

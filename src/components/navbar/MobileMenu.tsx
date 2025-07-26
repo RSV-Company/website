@@ -89,6 +89,7 @@ const MobileMenu = ({ isOpen, onClose, categories }: any) => {
                   <div className="pl-4 space-y-2">
                     {categories.map((ct: any) => (
                       <Link
+                      onClick={onClose}
                         key={ct.id}
                         href={`/products/?category=${ct.id}`}
                         className="block py-2 text-sm text-gray-600 hover:text-green-600"
@@ -102,7 +103,7 @@ const MobileMenu = ({ isOpen, onClose, categories }: any) => {
             ))}
           </div>
 
-          <div className="border-t mt-6 pt-6 px-4">
+          {/* <div className="border-t mt-6 pt-6 px-4">
             <div className="space-y-4">
               <a
                 href="#"
@@ -123,7 +124,7 @@ const MobileMenu = ({ isOpen, onClose, categories }: any) => {
                 Wishlist
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

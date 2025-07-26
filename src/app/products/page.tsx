@@ -1,8 +1,8 @@
 import ProductsPage from "@/components/products/ProductsPage";
-import React from "react";
+import React, { Suspense } from "react";
 
 const Products = () => {
-  return <ProductsPage />;
+  return <Suspense> <ProductsPage /> </Suspense>;
 };
 
 export default Products;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,9 +15,18 @@ import FilterSheet from "./FilterSheet";
 import ActiveFilters from "./ActiveFilters";
 import ProductGrid from "./ProductGrid";
 import { useSupabaseProducts } from "@/hooks/useProducts";
+import { useSearchParams } from "next/navigation";
 
 const ProductsPage = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const params = useSearchParams()
+  const categoryId = params.get("category") || "";
+
+  const [activeCategoryId, setActiveCategoryId] = useState(categoryId);
+
+  useEffect(() => {
+    setActiveCategoryId(categoryId);
+  }, [categoryId]);
 
   const {
     products,
@@ -31,7 +40,19 @@ const ProductsPage = () => {
     error,
     // activeFiltersCount,
     filterOptions,
-  } = useSupabaseProducts();
+  } = useSupabaseProducts(activeCategoryId);
+
+  const [searchTerm, setSearchTerm] = useState(filters.search);
+
+useEffect(() => {
+  const handler = setTimeout(() => {
+    updateFilter("search", searchTerm);
+  }, 500); // 500ms debounce
+
+  return () => {
+    clearTimeout(handler);
+  };
+}, [searchTerm]);
 
   if (error) {
     return (
@@ -45,7 +66,7 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="min-h-screen max-w-7xl mx-auto bg-background">
+    <div className="min-h-screen max-w-7xl mx-auto bg-primary-bg">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -61,8 +82,8 @@ const ProductsPage = () => {
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search products..."
-              value={filters.search}
-              onChange={(e) => updateFilter("search", e.target.value)}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -108,6 +129,7 @@ const ProductsPage = () => {
           onClearFilters={clearFilters}
         />
       </div>
+      
     </div>
   );
 };

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/config/client";
+import Logo from "@/const/logo";
 
 export function Footer() {
   const [categories, setCategories] = useState<any>([]);
@@ -30,11 +31,10 @@ export function Footer() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* Brand Section */}
         <div>
-          <h2 className="text-white text-lg font-semibold">Website</h2>
-          <p className="text-sm mt-2">
-            Your trusted store for everyday essentials. Quality you can count
-            on.
-          </p>
+          <Link href="/" className="flex items-left w-[8rem] h-[8rem]">
+              <Logo />
+              </Link>
+        
         </div>
 
         {/* Shop Links */}
@@ -63,11 +63,11 @@ export function Footer() {
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/help/contact" className="hover:text-white">
+              <Link href="/contact-us" className="hover:text-white">
                 Contact Us
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/help/shipping" className="hover:text-white">
                 Shipping Info
               </Link>
@@ -76,7 +76,7 @@ export function Footer() {
               <Link href="/help/returns" className="hover:text-white">
                 Returns & Exchanges
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/faq" className="hover:text-white">
                 FAQs
@@ -126,7 +126,7 @@ export function Footer() {
 
       {/* Footer Bottom */}
       <div className="mt-10 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-        <p>&copy; 2024 Website. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Website. All rights reserved.</p>
       </div>
     </footer>
   );

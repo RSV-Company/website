@@ -9,6 +9,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
+import { supabase } from "@/config/client";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -78,34 +79,44 @@ export default function ContactForm() {
     }
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) {
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+  const { name, email, phone, subject, message, category } = formData;
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+  const { error } = await supabase.from("contact_messages").insert([
+    {
+      full_name: name,
+      email,
+      phone,
+      subject,
+      message,
+      category,
+    },
+  ]);
 
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-        category: "general",
-      });
-    }, 3000);
-  };
+  setIsSubmitting(false);
+
+  if (error) {
+    console.error("Supabase error:", error);
+    alert("Failed to send message. Please try again.");
+    return;
+  }
+
+  setIsSubmitted(true);
+
+  setTimeout(() => {
+    setIsSubmitted(false);
+    resetForm();
+  }, 3000);
+};
+
 
   const resetForm = () => {
     setFormData({

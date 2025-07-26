@@ -19,7 +19,7 @@ export function HeroSection() {
             {/* Headline */}
             <div className="space-y-4 text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                Explore high-quality household products
+                Creating Beautiful Spaces That Feel Just Like Home
               </h1>
               <p className="text-gray-600 text-base sm:text-lg">
                 Shop over 1,000 essential items for your home
@@ -40,7 +40,7 @@ export function HeroSection() {
             </div>
 
             {/* Stats */}
-            <div className="w-full pt-6 sm:pt-8">
+            {/* <div className="w-full pt-6 sm:pt-8">
               <div className="grid grid-cols-3 gap-4 text-center lg:text-left">
                 {stats.map((stat, index) => (
                   <div key={index}>
@@ -51,7 +51,7 @@ export function HeroSection() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column */}

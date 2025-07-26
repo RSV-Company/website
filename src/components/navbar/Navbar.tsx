@@ -37,18 +37,13 @@ const Navbar = () => {
     <div className="font-inter">
       <TopBanner />
 
-      <header className="bg-white shadow-sm px-4 sm:px-6 sticky top-0 z-40">
+      <header className="bg-primary-bg shadow-sm px-4 sm:px-6 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-[4.6rem]">
             {/* Logo */}
             <div className="flex items-left">
-              <Link href="/" className="flex items-left">
-                <span
-                  className="text-2xl font-bold text-green-600"
-                  style={{ fontFamily: "Inter, sans-serif" }}
-                >
-                  Website
-                </span>
+              <Link href="/" className="flex items-left w-[6rem] h-[6rem]">
+              <img src="/fav.svg" alt="logo" className="w-full h-full" />
               </Link>
             </div>
 
@@ -58,15 +53,15 @@ const Navbar = () => {
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2">
               {/* Search Icon */}
-              <button
+              {/* <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-gray-700 hover:text-green-600 transition-colors rounded-full hover:bg-gray-100"
               >
                 <Search className="h-6 w-6" />
-              </button>
+              </button> */}
 
               {/* User Menu */}
-              <UserMenu />
+              {/* <UserMenu /> */}
 
               {/* Cart */}
               <CartIcon />
@@ -83,10 +78,10 @@ const Navbar = () => {
         </div>
 
         {/* Search Overlay */}
-        <SearchOverlay
+        {/* <SearchOverlay
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
-        />
+        /> */}
 
         {/* Mobile Menu */}
         <MobileMenu

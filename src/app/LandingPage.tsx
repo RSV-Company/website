@@ -76,9 +76,9 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-primary-bg overflow-x-hidden">
       <HeroSection />
-      <GetLookContainer />
+      {/* <GetLookContainer /> */}
       <FeaturedProducts products={featuredProducts} loading={loading} />
       <ShopByCategory categories={categories} />
       <FeaturedProducts
@@ -87,7 +87,7 @@ const LandingPage = () => {
         products={bestSellingProducts}
         loading={loading}
       />
-      <NewsletterSection />
+      {/* <NewsletterSection /> */}
     </div>
   );
 };

@@ -49,7 +49,7 @@ export function FeaturedProducts({
         {/* Desktop - grid layout */}
         <div className="hidden lg:grid grid-cols-4 gap-6">
           {products.map((product, index) => (
-            <ProductCard product={product} />
+            <ProductCard product={product} key={product.id} />
           ))}
         </div>
       </div>
