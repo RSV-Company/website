@@ -57,7 +57,7 @@ const ProductGrid = ({
     >
       {products?.map((product) => (
         // <Link key={product.id} href={`/products/${product.slug}`}>
-        <ProductCard product={product} viewMode={viewMode} />
+        <ProductCard key={product.id} product={product} viewMode={viewMode} />
         // </Link>
       ))}
     </div>

@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { Product, Filters, SortOption } from "@/types/products";
 import { supabase } from "@/config/client";
 
+let debounceTimeout: NodeJS.Timeout;
+
 export const useSupabaseProducts = (paramCategory: string) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -9,8 +11,8 @@ export const useSupabaseProducts = (paramCategory: string) => {
 
   const [filters, setFilters] = useState<Filters>({
     search: "",
-    category: paramCategory ? [paramCategory] : [], // This should be string[] for UUIDs
-    brand: [], // This should be string[] for UUIDs
+    category: paramCategory ? [paramCategory] : [],
+    brand: [],
     priceRange: [0, 1000],
     rating: 0,
     inStock: false,
@@ -19,62 +21,54 @@ export const useSupabaseProducts = (paramCategory: string) => {
   });
 
   useEffect(() => {
-  setFilters((prev) => ({
-    ...prev,
-    category: paramCategory ? [paramCategory] : [],
-  }));
-}, [paramCategory]);
+    setFilters((prev) => ({
+      ...prev,
+      category: paramCategory ? [paramCategory] : [],
+    }));
+  }, [paramCategory]);
 
   const [sortBy, setSortBy] = useState<SortOption>("featured");
 
-  // Fetch products with applied filters and sorting
   const fetchProducts = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
       let query = supabase.from("products").select(`
-          *,
-          categories:category_id(id, name),
-          brands:brand_id(id, name)
-        `);
+        *,
+        categories:category_id(id, name),
+        brands:brand_id(id, name)
+      `);
 
       if (filters.search && filters.search.trim()) {
         const searchTerm = filters.search.trim();
-
         query = query.or(
           `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`
         );
       }
 
-      // Apply category filter - Fixed: Ensure we're using the correct ID format
-      if (filters.category && filters.category.length > 0) {
+      if (filters.category.length > 0) {
         query = query.in("category_id", filters.category);
       }
 
-      // Apply brand filter - Fixed: Ensure we're using the correct ID format
-      if (filters.brand && filters.brand.length > 0) {
+      if (filters.brand.length > 0) {
         query = query.in("brand_id", filters.brand);
       }
 
-      // Apply price range filter - Fixed: Uncommented and improved
       if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) {
         query = query
           .gte("price", filters.priceRange[0])
           .lte("price", filters.priceRange[1]);
       }
 
-      // Apply rating filter
       if (filters.rating > 0) {
         query = query.gte("rating", filters.rating);
       }
 
-      // Apply stock filter
       if (filters.inStock) {
         query = query.gt("stock_quantity", 0);
       }
 
-      // Apply sorting
       switch (sortBy) {
         case "featured":
           query = query.order("is_featured", { ascending: false });
@@ -112,7 +106,18 @@ export const useSupabaseProducts = (paramCategory: string) => {
     }
   };
 
-  // Fetch filter options (categories, brands)
+  // Debounce fetchProducts when filters or sortBy change
+  const stableFilters = useMemo(() => filters, [JSON.stringify(filters)]);
+  const stableSort = useMemo(() => sortBy, [sortBy]);
+
+  useEffect(() => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      fetchProducts();
+    }, 300); // adjust delay if needed
+    return () => clearTimeout(debounceTimeout);
+  }, [stableFilters, stableSort]);
+
   const [filterOptions, setFilterOptions] = useState<any>({
     categories: [],
     brands: [],
@@ -123,7 +128,6 @@ export const useSupabaseProducts = (paramCategory: string) => {
 
   const fetchFilterOptions = async () => {
     try {
-      // Fetch categories
       const { data: categories, error: categoriesError } = await supabase
         .from("categories")
         .select("id, name")
@@ -133,7 +137,6 @@ export const useSupabaseProducts = (paramCategory: string) => {
         console.error("Error fetching categories:", categoriesError);
       }
 
-      // Fetch brands
       const { data: brands, error: brandsError } = await supabase
         .from("brands")
         .select("id, name")
@@ -155,7 +158,10 @@ export const useSupabaseProducts = (paramCategory: string) => {
     }
   };
 
-  // Update a specific filter
+  useEffect(() => {
+    fetchFilterOptions();
+  }, []);
+
   const updateFilter = (key: keyof Filters, value: any) => {
     setFilters((prev) => ({
       ...prev,
@@ -163,12 +169,11 @@ export const useSupabaseProducts = (paramCategory: string) => {
     }));
   };
 
-  // Clear all filters
   const clearFilters = () => {
     setFilters({
       search: "",
-      category: [], // Reset to empty array
-      brand: [], // Reset to empty array
+      category: [],
+      brand: [],
       priceRange: [0, 1000],
       rating: 0,
       inStock: false,
@@ -177,7 +182,6 @@ export const useSupabaseProducts = (paramCategory: string) => {
     });
   };
 
-  // Remove a specific filter
   const removeFilter = (key: keyof Filters, value?: string) => {
     if (key === "search") {
       updateFilter(key, "");
@@ -196,14 +200,6 @@ export const useSupabaseProducts = (paramCategory: string) => {
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filters, sortBy]);
-
-  useEffect(() => {
-    fetchFilterOptions();
-  }, []);
-
   return {
     products,
     filters,
@@ -214,7 +210,6 @@ export const useSupabaseProducts = (paramCategory: string) => {
     setSortBy,
     isLoading,
     error,
-    // activeFiltersCount,
     filterOptions,
     refetch: fetchProducts,
   };

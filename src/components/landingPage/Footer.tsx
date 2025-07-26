@@ -28,10 +28,10 @@ export function Footer() {
 
   return (
     <footer className="w-full bg-gray-900 text-gray-400 px-6 py-12">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 items-center">
         {/* Brand Section */}
         <div>
-          <Link href="/" className="flex items-left w-[8rem] h-[8rem]">
+          <Link href="/" className="flex items-left w-[11rem] h-[11rem]">
               <Logo />
               </Link>
         

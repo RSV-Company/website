@@ -80,7 +80,7 @@ const LandingPage = () => {
       <HeroSection />
       {/* <GetLookContainer /> */}
       <FeaturedProducts products={featuredProducts} loading={loading} />
-      <ShopByCategory categories={categories} />
+      <ShopByCategory categories={categories} loading={loading} />
       <FeaturedProducts
         title="WAIT THERE’S MORE…"
         description="Discover some more items in our shop."

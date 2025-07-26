@@ -5,6 +5,9 @@ import { products } from "@/const/products";
 import { ProductCard } from "./ProductCard";
 import { useRef } from "react";
 import { Product } from "@/types/products";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonProductCard } from "../skeletons/productCardSkeleton";
+import { Spinner } from "../skeletons/Spinner";
 
 export function FeaturedProducts({
   title,
@@ -18,6 +21,9 @@ export function FeaturedProducts({
   loading: boolean;
 }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Helper: skeleton count
+  const skeletonArray = Array.from({ length: 4 });
 
   return (
     <section className="w-full px-3 md:px-16 py-6 md:py-16">
@@ -35,21 +41,34 @@ export function FeaturedProducts({
         </div>
 
         {/* Mobile - horizontal scroll */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth hide-scroll pb-4 pr-6 -ml-1 lg:hidden"
-        >
-          {products.map((product, index) => (
-            <div key={index} className="max-w-[320px] shrink-0">
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+  <div className="lg:hidden h-[460px] w-full flex items-center justify-center">
+    <Spinner />
+  </div>
+) : (
+  <div
+    ref={scrollContainerRef}
+    className="flex gap-4 overflow-x-auto scroll-smooth hide-scroll pb-4 pr-6 -ml-1 lg:hidden"
+  >
+    {products.map((product, index) => (
+      <div key={product.id || index} className="max-w-[320px] shrink-0">
+        <ProductCard product={product} />
+      </div>
+    ))}
+  </div>
+)}
+
 
         {/* Desktop - grid layout */}
         <div className="hidden lg:grid grid-cols-4 gap-6">
-          {products.map((product, index) => (
-            <ProductCard product={product} key={product.id} />
+          {(loading ? skeletonArray : products).map((_, index) => (
+            <div key={index}>
+              {loading ? (
+                <SkeletonProductCard />
+              ) : (
+                <ProductCard product={products[index]} />
+              )}
+            </div>
           ))}
         </div>
       </div>

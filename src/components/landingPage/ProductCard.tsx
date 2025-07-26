@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge";
 import { Product } from "@/types/products";
 import Link from "next/link";
 import { useCart } from "react-use-cart";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
@@ -15,10 +16,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
 
   const currentPrice = product?.discount_price || product?.price;
   const hasDiscount = !!product?.discount_price;
+  const isInCart = items.some((item) => item.id === product.id);
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
@@ -36,12 +38,16 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   return (
     <div className="w-full border gap-2 bg-white p-3 shadow-none rounded-none dark:border-gray-700 dark:bg-gray-800">
       <div className="h-56 w-full relative">
+        <Link
+          href={`/products/${product.slug}`}
+          className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
+        >
         <img
           className="w-full h-full object-cover"
           src={product.main_image_url || "/placeholder.jpg"}
           alt={product.title}
         />
-
+      </Link>
         {/* Badges */}
         {product.is_featured && (
           <Badge className="bg-blue-500 text-white absolute top-2 left-2 text-xs font-medium">
@@ -129,17 +135,21 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
 
           <Button
             className="inline-flex items-center bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            disabled={product.stock_quantity === 0}
+            disabled={isInCart || product.stock_quantity === 0}
             onClick={() => {
               addItem({
                 ...product,
                 price: product.discount_price,
                 originalPrice: product.price,
               });
+              toast("Great choice! It's in your cart now.", {
+                position: "top-right",
+                description: `${product.title} is safely in your cart. You can review it anytime before checkout.`,
+              })
             }}
           >
             <ShoppingCart className="-ms-2 me-2 h-5 w-5" />
-            Add to cart
+             {isInCart ? "Added to Cart" : "Add to Cart"}
           </Button>
         </div>
       </div>

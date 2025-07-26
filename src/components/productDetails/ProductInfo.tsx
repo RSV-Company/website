@@ -17,15 +17,18 @@ import { Button } from "../ui/button";
 import { getDiscountPercentage } from "@/lib/utils";
 import { useCart } from "react-use-cart";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const ProductInfo = ({ product }: any) => {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const router = useRouter();
   // const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   // const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
 
   const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const isInCart = items.some((item) => item.id === product.id);
 
   const handleQuantityChange = (type: string) => {
     if (type === "increment") {
@@ -138,6 +141,7 @@ const ProductInfo = ({ product }: any) => {
 
       <div className="flex space-x-4">
         <Button
+        disabled={isInCart}
           onClick={() => {
             addItem({
               ...product,
@@ -145,13 +149,17 @@ const ProductInfo = ({ product }: any) => {
               originalPrice: product.price,
               main_image_url: product.images[0].image_url,
             });
-            router.push("/products");
+            // router.push("/products");
+            toast("Great choice! It's in your cart now.", {
+                position: "top-right",
+                description: `${product.title} is safely in your cart. You can review it anytime before checkout.`,
+              })
           }}
           className="flex-1"
           size="lg"
         >
           <ShoppingCart className="h-5 w-5 mr-2" />
-          Add to Cart
+          {isInCart ? "Added to Cart" : "Add to Cart"}
         </Button>
         {/* <Button
           variant="outline"
